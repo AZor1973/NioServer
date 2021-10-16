@@ -21,9 +21,9 @@ import java.util.*;
 // touch file -> создать пустой файл
 public class NioServer {
 
-    private ServerSocketChannel server;
-    private Selector selector;
-    private ByteBuffer buffer;
+    private final ServerSocketChannel server;
+    private final Selector selector;
+    private final ByteBuffer buffer;
     private Path path = Paths.get("./");
 
     public NioServer() throws Exception {
@@ -41,7 +41,7 @@ public class NioServer {
             while (iterator.hasNext()) {
                 SelectionKey key = iterator.next();
                 if (key.isAcceptable()) {
-                    handleAccept(key);
+                    handleAccept();
                 }
                 if (key.isReadable()) {
                     handleRead(key);
@@ -72,9 +72,8 @@ public class NioServer {
             }
             buffer.clear();
         }
-        String result;
         String str = sb.toString().trim();
-        result = "[From server]: " + sb;
+        String result = "[From server]: " + sb;
         File dir = new File(String.valueOf(path));
         String[] files = dir.list();
         String trim = "";
@@ -126,7 +125,7 @@ public class NioServer {
         }
     }
 
-    private void handleAccept(SelectionKey key) throws Exception {
+    private void handleAccept() throws Exception {
         SocketChannel channel = server.accept();
         channel.configureBlocking(false);
         channel.register(selector, SelectionKey.OP_READ, "Hello world!");
